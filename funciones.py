@@ -6,8 +6,8 @@ import debit_rules
 import gradio as gr
 import gradio_client
 import time
+import tools
 
-abrazo = bridges.hug
 btn_buy = gr.Button("Get Credits", visible=False, size='lg')
 
 #PERFORM es la app INTERNA que llamará a la app externa.
@@ -21,9 +21,11 @@ def perform(input1, request: gr.Request, *args):
     #1: Reglas sobre autorización si se tiene el crédito suficiente.
     autorizacion = sulkuPypi.authorize(tokens, globales.work)
     if autorizacion is True:
-        #IMPORTANTE: EJECUCIÓN DE LA APP EXTERNA: mass siempre será la aplicación externa que consultamos via API.   
-        #resultado = mass(input1,input2)
-        resultado = mass(input1, *args)
+        try: 
+            resultado = mass(input1, *args)
+        except Exception as e:            
+            info_window, resultado, html_credits = sulkuFront.aError(request.username, tokens, excepcion = tools.apicomProcessor(e))
+            return resultado, info_window, html_credits, btn_buy
     else:
         info_window, resultado, html_credits = sulkuFront.noCredit(request.username)
         return resultado, info_window, html_credits, btn_buy
@@ -45,7 +47,7 @@ def mass(input1, input2):
     imagenSource = gradio_client.handle_file(input1) 
     imagenDestiny = gradio_client.handle_file(input2)       
 
-    client = gradio_client.Client(globales.api, hf_token=abrazo)
+    client = gradio_client.Client(globales.api, hf_token=bridges.hug)
     result = client.predict(imagenSource, imagenDestiny, api_name="/predict")
 
     return result
@@ -69,7 +71,6 @@ def mass_zhi(input1, input2):
         )
     
     print(result)
-    print(result[0])
-    
+    print(result[0])    
 
     return result[0]
