@@ -11,7 +11,7 @@ import tools
 btn_buy = gr.Button("Get Credits", visible=False, size='lg')
 
 #PERFORM es la app INTERNA que llamará a la app externa.
-def perform(input1, request: gr.Request, *args):
+def perform(input1, input2, request: gr.Request):
 
     #Future: Maneja una excepción para el concurrent.futures._base.CancelledError
     #Future: Que no se vea el resultado anterior al cargar el nuevo resultado! (aunque solo se ven los resultados propios.)         
@@ -22,7 +22,7 @@ def perform(input1, request: gr.Request, *args):
     autorizacion = sulkuPypi.authorize(tokens, globales.work)
     if autorizacion is True:
         try: 
-            resultado = mass(input1, *args)
+            resultado = mass(input1, input2)
         except Exception as e:            
             info_window, resultado, html_credits = sulkuFront.aError(request.username, tokens, excepcion = tools.apicomProcessor(e))
             return resultado, info_window, html_credits, btn_buy
