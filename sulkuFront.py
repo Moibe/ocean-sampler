@@ -2,25 +2,16 @@ import time
 import globales
 import sulkuPypi
 import gradio as gr
-import gradio_client
-import bridges
-import tools
 import threading
+from huggingface_hub import HfApi
 
 result_from_displayTokens = None
-
-def initAPI():
-    #PROCESO1
-    print("Estoy en turn on API.")
-    try: #No usar si siempre estará prendida.
-        client = gradio_client.Client(globales.api, hf_token=bridges.hug)
-        terminal = "AI engine ready."
-        client = None
-    except Exception as e:
-        print("No api, encendiendo: ", e)  
+result_from_initAPI = None    
 
 def displayTokens(request: gr.Request):
-    #PROCESO2
+    
+    global result_from_displayTokens
+
     print("Estoy en displayTokens...")
     novelty = sulkuPypi.getNovelty(sulkuPypi.encripta(request.username).decode("utf-8"), globales.aplicacion)    
     if novelty == "new_user": 
@@ -28,22 +19,22 @@ def displayTokens(request: gr.Request):
     else: 
         tokens = sulkuPypi.getTokens(sulkuPypi.encripta(request.username).decode("utf-8"), globales.env)
         display = visualizar_creditos(tokens, request.username) 
-
-    global result_from_displayTokens
+    
     result_from_displayTokens = display 
 
-    return display
 
 def precarga(request: gr.Request):
-    global result_from_displayTokens
 
-    thread1 = threading.Thread(target=initAPI)
+    # global result_from_initAPI
+    # global result_from_displayTokens
+    
+    #thread1 = threading.Thread(target=initAPI)
     thread2 = threading.Thread(target=displayTokens, args=(request,))
 
-    thread1.start()
+    #thread1.start()
     thread2.start()
 
-    thread1.join()  # Espera a que el hilo 1 termine
+    #thread1.join()  # Espera a que el hilo 1 termine
     thread2.join()  # Espera a que el hilo 2 termine
 
     return result_from_displayTokens  
@@ -69,11 +60,34 @@ def noCredit(usuario):
     return info_window, path, html_credits
 
 def aError(usuario, tokens, excepcion):
-    info_window = tools.manejadorExcepciones(excepcion)
+    info_window = manejadorExcepciones(excepcion)
     path = 'images/error.png'
     tokens = tokens
     html_credits = visualizar_creditos(tokens, usuario)   
     return info_window, path, html_credits
+
+def manejadorExcepciones(excepcion):
+    #El parámetro que recibe es el texto despliega ante determinada excepción:
+    if excepcion == "PAUSED": 
+        info_window = "AI Engine Paused, ready soon."
+    elif excepcion == "RUNTIME_ERROR":
+        info_window = "Error building AI environment, please contact me."
+    elif excepcion == "STARTING":
+        info_window = "Server Powering UP, wait a few minutes and try again."
+    elif excepcion == "HANDSHAKE_ERROR":
+        info_window = "Connection error try again."
+    elif excepcion == "GENERAL":
+        info_window = "Network error, no credits were debited."
+    elif excepcion == "NO_FACE":
+        info_window = "Unable to detect a face in the image. Please upload a different photo with a clear face."
+    elif excepcion == "NO_FILE":
+        info_window = "No file, please add a valid archive."
+    elif "quota" in excepcion: #Caso especial porque el texto cambiará citando la cuota.
+        info_window = excepcion
+    else:
+        info_window = "Error. No credits were debited."
+
+    return info_window
 
 def presentacionFinal(usuario, accion):
         

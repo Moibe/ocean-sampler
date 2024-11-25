@@ -19,7 +19,7 @@ configuraciones = {
     },
     "splashmix": {
         "input1": gr.Image(label="Source", type="filepath"),
-        "result": gr.Image(label="Source", type="filepath"),
+        "result": gr.Image(label="Destination", type="filepath"),
     },
     "txt2image": {
         "input1": gr.Textbox(),
