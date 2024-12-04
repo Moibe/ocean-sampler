@@ -47,6 +47,7 @@ def titulizaExcepDeAPI(e):
     elif "PAUSED" in str(e):
         resultado = "PAUSED" 
     elif "The read operation timed out" in str(e): #IMPORTANTE, ESTO TAMBIÉN SUCEDE CUANDO LA DESPIERTAS Y ES INSTANTÁNEO.
+        print("Llegué a the read operation timed out... dentro de tituliza.")
         resultado = "STARTING"
     elif "GPU quota" in str(e): 
         resultado = recortadorQuota(str(e)) #Cuando se trata de quota regresa el resultado completo convertido a string.
@@ -87,4 +88,40 @@ def recortadorQuota(texto_quota):
         print(subcadena)
     
     return subcadena
+
+def desTuplaResultado(resultado):
+    #Procesa la tupla recibida y la convierte ya sea en imagen(path) o error(string)       
+    if isinstance(resultado, tuple):
+
+        print("El resultado fue una tupla, ésta tupla:")
+        print(resultado)
+        resultado_voz = resultado[0]
+        resultado_audio = resultado[1]
+
+        print("Los resultados entregados son: ", resultado_voz, resultado_audio)
+        return resultado_voz, resultado_audio
+       
+
+    #NO PROCESO CORRECTAMENTE NO GENERA UNA TUPLA.
+    #CORRIGE IMPORTANTE: QUE NO SE SALGA DEL CICLO DE ESA IMAGEN AL ENCONTRAR ERROR.
+    else:
+        #NO ES UNA TUPLA:
+        print("El tipo del resultado cuando no fue una tupla es: ", type(resultado))                
+        texto = str(resultado)
+        segmentado = texto.split('exception:')
+        print("Segmentado es una posible causa de error, analiza segmentado es: ", segmentado)
+        #FUTURE: Agregar que si tuvo problemas con la imagen de referencia, agregue en un 
+        #Log de errores porque ya no lo hará en el excel, porque le dará la oportunidad con otra 
+        #imagen de posición.
+        try:
+            #Lo pongo en try porque si no hay segmentado[1], suspende toda la operación. 
+            print("Segmentado[1] es: ", segmentado[1])
+            mensaje = segmentado[1]
+            return mensaje
+        except Exception as e:
+            print("Error en el segmentado: ", e)
+            # mensaje = "concurrent.futures._base.CancelledError"
+            # concurrents = concurrents + 1
+        finally: 
+            pass
 

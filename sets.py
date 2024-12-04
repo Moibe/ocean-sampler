@@ -9,13 +9,13 @@ configuraciones = {
     },
     "video-blend": {
         "input1": gr.Image(label="Source", type="filepath"),
-        "input2": gr.Video(),
+        "input2": gr.Video(label="Destination"),
         "result": gr.Video(label="Result") 
     },
     "sampler": {
-        "input1": gr.Audio(),
-        "input2": gr.Audio(),
-        "result": gr.Audio(label="Result") 
+        "input1": gr.Audio(label="Source", type="filepath"),
+        "result_voice": gr.Audio(label="Destination", type="filepath"),
+        "result_audio": gr.Audio(label="Result") 
     },
     "splashmix": {
         "input1": gr.Image(label="Source", type="filepath"),
@@ -27,7 +27,7 @@ configuraciones = {
     },
     "txt2video": {
         "input1": gr.Textbox(),
-        "result": gr.Video(),
+        "result": gr.Video(label="Destination"),
     },
     "zhi": {
         "input1": gr.Image(label="Source", type="filepath"),

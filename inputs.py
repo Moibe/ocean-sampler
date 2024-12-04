@@ -14,9 +14,9 @@ def inputs_selector(set):
             return input1, result
         elif len(config) == 3:
             input1 = config["input1"]
-            input2 = config["input2"]
-            result = config["result"]
+            result_voice = config["result_voice"]
+            result_audio = config["result_audio"]
             
-            return input1, input2, result
+            return input1, result_voice, result_audio
     else:
         print("Set no válido")

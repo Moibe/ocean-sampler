@@ -2,7 +2,6 @@ import bridges
 import globales
 import sulkuPypi
 import sulkuFront
-import debit_rules
 import gradio as gr
 import gradio_client
 import time
@@ -11,10 +10,7 @@ import tools
 btn_buy = gr.Button("Get Credits", visible=False, size='lg')
 
 #PERFORM es la app INTERNA que llamará a la app externa.
-def perform(input1, input2, request: gr.Request):
-
-    #Future: Maneja una excepción para el concurrent.futures._base.CancelledError
-    #Future: Que no se vea el resultado anterior al cargar el nuevo resultado! (aunque solo se ven los resultados propios.)         
+def perform(input1, request: gr.Request):
 
     tokens = sulkuPypi.getTokens(sulkuPypi.encripta(request.username).decode("utf-8"), globales.env)
     
@@ -22,69 +18,44 @@ def perform(input1, input2, request: gr.Request):
     autorizacion = sulkuPypi.authorize(tokens, globales.work)
     if autorizacion is True:
         try: 
-            resultado = mass(input1, input2)
-        except Exception as e:            
+            resultado_voz, resultado_audio = mass(input1)
+            print("Salí de mass con los resultados de voz: ", resultado_voz)
+            print("Y el de audio: ", resultado_audio)
+
+        except Exception as e:
+            print("No salí exitoso de mass y me fuí a la primer excepeción...")
+            print("Y ésto es la excep: ", e)
+            time.sleep(4)            
             info_window, resultado, html_credits = sulkuFront.aError(request.username, tokens, excepcion = tools.titulizaExcepDeAPI(e))
-            return resultado, info_window, html_credits, btn_buy
+            return resultado_voz, resultado_audio, info_window, html_credits, btn_buy
     else:
         info_window, resultado, html_credits = sulkuFront.noCredit(request.username)
-        return resultado, info_window, html_credits, btn_buy
-    
-    print("El resultado obtenido de mass en gradio-standalone es: ")
-    print(resultado)
-    time.sleep(1)
-    
+        return resultado_voz, resultado_audio, info_window, html_credits, btn_buy
+
+
     #Primero revisa si es imagen!: 
-    if "result.png" in resultado:
+    if "vocals.wav" in resultado_voz:
         #Si es imagen, debitarás.
+        print("Entré a vocals.wav")
         html_credits, info_window = sulkuFront.presentacionFinal(request.username, "debita")
+        return resultado_voz, resultado_audio, info_window, html_credits, btn_buy
     else: 
         #Si no es imagen es un texto que nos dice algo.
         info_window, resultado, html_credits = sulkuFront.aError(request.username, tokens, excepcion = tools.titulizaExcepDeAPI(resultado))
         return resultado, info_window, html_credits, btn_buy      
     
-    # #2: ¿El resultado es debitable?
-    # if debit_rules.debita(resultado) == True:
-    #     html_credits, info_window = sulkuFront.presentacionFinal(request.username, "debita")
-    # else:
-    #     html_credits, info_window = sulkuFront.presentacionFinal(request.username, "no debita") 
-            
-    #Lo que se le regresa oficialmente al entorno.
-    return resultado, info_window, html_credits, btn_buy
+    
 
 #MASS es la que ejecuta la aplicación EXTERNA
-def mass(input1, input2):
-
-    client = gradio_client.Client(globales.api, hf_token=bridges.hug)
-    #client = gradio_client.Client("https://058d1a6dcdbaca0dcf.gradio.live/")  #MiniProxy
-
-    imagenSource = gradio_client.handle_file(input1) 
-    imagenDestiny = gradio_client.handle_file(input2)       
-
-    #result = splash_tools.desTuplaResultado(result)
-    result = client.predict(imagenSource, imagenDestiny, api_name="/predict")
-
-    return result
-
-def mass_zhi(input1, input2): 
-
-    imagenSource = gradio_client.handle_file(input1) 
-    #imagenDestiny = gradio_client.handle_file(input2)       
-
-    client = gradio_client.Client(globales.api)
-    #result = client.predict(imagenSource, imagenDestiny, api_name="/predict")
-
-    result = client.predict(
-		prompt="A hot girl in sexy cocktail dress.",
-		person_img=imagenSource,
-		seed=486992,
-		randomize_seed=False,
-		height=1024,
-		width=1024,
-		api_name="/character_gen"
-        )
+def mass(input1):
     
-    print(result)
-    print(result[0])    
+    audioSource = gradio_client.handle_file(input1)
+    client = gradio_client.Client(globales.api, hf_token=bridges.hug)
+    
+    un_resultado = client.predict(audioSource, api_name="/predict")
+    print("Terminé mass...")
+    print("Y ésto es resultado: ", un_resultado)
+    print("Destuplaré el resultado: ")
+    resultado_voz, resultado_audio = tools.desTuplaResultado(un_resultado)
 
-    return result[0]
+    return resultado_voz, resultado_audio

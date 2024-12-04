@@ -1,13 +1,13 @@
 #!/bin/bash
-pid=$(lsof -i :7860 | awk 'NR==2 {print $2}')
+pid=$(lsof -i :7810 | awk 'NR==2 {print $2}')
 #Revisar si la búsqueda del proceso está vacía.
 if [ -z "$pid" ]; then
   #Si está vacía entonces:
   timestamp1=$(date +"%d-%m-%Y %H:%M:%S")
-  echo "$timestamp1 - ATENCIÓN: No se encontró ningún proceso escuchando en el puerto 7860. Reactivando aplicación."
+  echo "$timestamp1 - ATENCIÓN: No se encontró ningún proceso escuchando en el puerto 7810. Reactivando aplicación."
   #Reiniciando proceso
   cd
-  cd code/gradio-standalone-do/
+  cd code/ocean-devo-sampler/
   source venv/bin/activate
   python app.py &
   nuevo_proceso=$(pgrep -f "python app.py")
@@ -16,5 +16,5 @@ if [ -z "$pid" ]; then
   #FUTURE: Si existe reactivación, que de alguna forma saque el nombre del commit para yo poder leerlo en los logs.
 else
   timestamp3=$(date +"%d-%m-%Y %H:%M:%S")
-  echo "$timestamp3 - ALIVE: Boilerplate, proceso $pid arriba y funcionando."
+  echo "$timestamp3 - ALIVE: Sampler-dev, proceso $pid arriba y funcionando."
 fi

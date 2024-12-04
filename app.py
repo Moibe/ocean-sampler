@@ -18,7 +18,7 @@ btn_buy = gr.Button("Get Credits", visible=False, size='lg')
 
 #Customizable Inputs and Outputs
 #Los valores que recibe si debes de agregarlos manualmente para cada app que hagas.
-input1, input2, result = inputs.inputs_selector(globales.seto)
+input1, result_voice, result_audio = inputs.inputs_selector(globales.seto)
 
 with gr.Blocks(theme=globales.tema, css="footer {visibility: hidden}") as main:   
     #Cargado en Load: Función, input, output
@@ -27,8 +27,8 @@ with gr.Blocks(theme=globales.tema, css="footer {visibility: hidden}") as main:
     with gr.Row():
         demo = gr.Interface(
             fn=funciones.perform,
-            inputs=[input1, input2], #Agregar inputs manualmente.
-            outputs=[result, lbl_console, html_credits, btn_buy], 
+            inputs=[input1],
+            outputs=[result_voice, result_audio, lbl_console, html_credits, btn_buy], 
             flagging_mode=globales.flag
             )
 iniciar()
