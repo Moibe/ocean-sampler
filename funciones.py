@@ -19,13 +19,8 @@ def perform(input1, request: gr.Request):
     if autorizacion is True:
         try: 
             resultado_voz, resultado_audio = mass(input1)
-            print("Salí de mass con los resultados de voz: ", resultado_voz)
-            print("Y el de audio: ", resultado_audio)
-
-        except Exception as e:
-            print("No salí exitoso de mass y me fuí a la primer excepeción...")
-            print("Y ésto es la excep: ", e)
-            time.sleep(4)            
+            
+        except Exception as e:            
             info_window, resultado, html_credits = sulkuFront.aError(request.username, tokens, excepcion = tools.titulizaExcepDeAPI(e))
             return resultado_voz, resultado_audio, info_window, html_credits, btn_buy
     else:
@@ -49,13 +44,10 @@ def perform(input1, request: gr.Request):
 #MASS es la que ejecuta la aplicación EXTERNA
 def mass(input1):
     
-    audioSource = gradio_client.handle_file(input1)
     client = gradio_client.Client(globales.api, hf_token=bridges.hug)
+    audioSource = gradio_client.handle_file(input1)    
     
-    un_resultado = client.predict(audioSource, api_name="/predict")
-    print("Terminé mass...")
-    print("Y ésto es resultado: ", un_resultado)
-    print("Destuplaré el resultado: ")
-    resultado_voz, resultado_audio = tools.desTuplaResultado(un_resultado)
+    resultado = client.predict(audioSource, api_name="/predict")
+    resultado_voz, resultado_audio = tools.desTuplaResultado(resultado)
 
     return resultado_voz, resultado_audio
