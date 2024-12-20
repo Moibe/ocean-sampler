@@ -7,7 +7,7 @@ if [ -z "$pid" ]; then
   echo "$timestamp1 - ATENCIÓN: No se encontró ningún proceso escuchando en el puerto 7811. Reactivando aplicación."
   #Reiniciando proceso
   cd
-  cd code/ocean-devo-sampler/
+  cd code/ocean-sampler/
   source venv/bin/activate
   python app.py &
   nuevo_proceso=$(pgrep -f "python app.py")
