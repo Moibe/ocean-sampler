@@ -1,11 +1,14 @@
 import gradio as gr
 
-version = "0.0.1"
+version = "1.1.1"
 env = "dev"
 aplicacion = "sampler-dev"
-api = "Moibe/sampler"
-#api = "abidlabs/music-separation"
-#api = "https://abidlabs-music-separation.hf.space/--replicas/f5un4/"
+
+api_zero = "Moibe/sampler"
+api_cost = "Moibe/sampler"
+same_api = True
+process_cost = 0
+
 seto = "sampler"
 work = "picswap"
 app_path = "/sampler-dev"

@@ -43,11 +43,33 @@ def perform(input1, request: gr.Request):
 
 #MASS es la que ejecuta la aplicación EXTERNA
 def mass(input1):
-    
-    client = gradio_client.Client(globales.api, hf_token=bridges.hug)
-    audioSource = gradio_client.handle_file(input1)    
-    
-    resultado = client.predict(audioSource, api_name="/predict")
-    resultado_voz, resultado_audio = tools.desTuplaResultado(resultado)
 
-    return resultado_voz, resultado_audio
+    if globales.same_api == False: #Si son diferentes apis, realiza el proceso de selección.
+        api, tipo_api = tools.elijeAPI()
+        print("Una vez elegido API, el tipo api es: ", tipo_api)
+    else: #Si no, deja la primera y no corras ningun proceso. 
+        api = globales.api_zero
+        tipo_api = "cost"
+    
+    client = gradio_client.Client(api, hf_token=bridges.hug)
+    audioSource = gradio_client.handle_file(input1)   
+
+    try: 
+    
+        resultado = client.predict(audioSource, api_name="/predict")
+    
+     #(Si llega aquí, debes debitar de la quota, incluso si detecto no-face o algo.)
+        if tipo_api == "gratis":
+            print("Como el tipo api fue gratis, si debitaremos la quota.")
+            sulkuPypi.updateQuota(globales.process_cost)
+        #No debitas la cuota si no era gratis, solo aplica para Zero.  
+  
+        resultado_voz, resultado_audio = tools.desTuplaResultado(resultado)
+        return resultado_voz, resultado_audio
+    
+    except Exception as e:
+            print("Hubo un errora al ejecutar MASS:", e)
+            #Errores al correr la API.
+            #La no detección de un rostro es mandado aquí?! Siempre?
+            mensaje = tools.titulizaExcepDeAPI(e)        
+            return mensaje
