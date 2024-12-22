@@ -2,6 +2,7 @@ import gradio as gr
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 version = "1.1.2"
 env = "dev"
 aplicacion = "sampler-dev"
@@ -17,6 +18,10 @@ version = "0.0.0"
 version = "0.0.1"
 >>>>>>> 0e918aa (Sampler Right Path)
 env = "dev"
+=======
+version = "0.0.2"
+env = "prod" #Importante porque define de donde se leerán los créditos y los datos de los usuarios!
+>>>>>>> 3cf5bd0 (Fix dev to prod)
 aplicacion = "sampler" #Se usa para que la api de sulku explore data y novelty de ese usuario.
 api = "Moibe/sampler"
 #api = "abidlabs/music-separation"
