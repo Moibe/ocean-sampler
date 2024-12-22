@@ -5,7 +5,7 @@ api_cost = "Moibe/sampler"
 same_api = True
 process_cost = 0
 
-version = "0.0.2"
+version = "0.0.3"
 env = "prod" #Importante porque define de donde se leerán los créditos y los datos de los usuarios!
 
 aplicacion = "sampler" #Se usa para que la api de sulku explore data y novelty de ese usuario.
