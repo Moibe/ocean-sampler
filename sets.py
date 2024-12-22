@@ -14,7 +14,7 @@ configuraciones = {
     },
     "sampler": {
         "input1": gr.Audio(label="Source", type="filepath"),
-        "result_voice": gr.Audio(label="Destination", type="filepath"),
+        "result_voice": gr.Audio(label="Voice", type="filepath"),
         "result_audio": gr.Audio(label="Result") 
     },
     "splashmix": {
