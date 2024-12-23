@@ -27,9 +27,7 @@ def perform(input1, request: gr.Request):
         info_window, resultado, html_credits = sulkuFront.noCredit(request.username)
         return resultado_voz, resultado_audio, info_window, html_credits, btn_buy
 
-
-    #Primero revisa si es imagen!: 
-    if "vocals.wav" in resultado_voz:
+    if "vocals" in resultado_voz:
         #Si es imagen, debitarás.
         print("Entré a vocals.wav")
         html_credits, info_window = sulkuFront.presentacionFinal(request.username, "debita")
@@ -38,8 +36,6 @@ def perform(input1, request: gr.Request):
         #Si no es imagen es un texto que nos dice algo.
         info_window, resultado, html_credits = sulkuFront.aError(request.username, tokens, excepcion = tools.titulizaExcepDeAPI(resultado))
         return resultado, info_window, html_credits, btn_buy      
-    
-    
 
 #MASS es la que ejecuta la aplicación EXTERNA
 def mass(input1):
