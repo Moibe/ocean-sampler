@@ -49,7 +49,7 @@ def mass(input1):
         resultado = client.predict(audioSource, api_name="/predict")
     
      #(Si llega aquí, debes debitar de la quota, incluso si detecto no-face o algo.)
-        if tipo_api == "gratis":
+        if tipo_api == "quota":
             print("Como el tipo api fue gratis, si debitaremos la quota.")
             sulkuPypi.updateQuota(globales.process_cost)
         #No debitas la cuota si no era gratis, solo aplica para Zero.  
