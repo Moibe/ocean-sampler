@@ -40,18 +40,12 @@ def perform(input1, request: gr.Request):
 #MASS es la que ejecuta la aplicación EXTERNA
 def mass(input1):
 
-    if globales.same_api == False: #Si son diferentes apis, realiza el proceso de selección.
-        api, tipo_api = tools.elijeAPI()
-        print("Una vez elegido API, el tipo api es: ", tipo_api)
-    else: #Si no, deja la primera y no corras ningun proceso. 
-        api = globales.api_zero
-        tipo_api = "cost"
+    api, tipo_api = tools.eligeAPI(globales.seleccion_api)
     
     client = gradio_client.Client(api, hf_token=bridges.hug)
     audioSource = gradio_client.handle_file(input1)   
 
-    try: 
-    
+    try:    
         resultado = client.predict(audioSource, api_name="/predict")
     
      #(Si llega aquí, debes debitar de la quota, incluso si detecto no-face o algo.)
@@ -64,8 +58,5 @@ def mass(input1):
         return resultado_voz, resultado_audio
     
     except Exception as e:
-            print("Hubo un errora al ejecutar MASS:", e)
-            #Errores al correr la API.
-            #La no detección de un rostro es mandado aquí?! Siempre?
             mensaje = tools.titulizaExcepDeAPI(e)        
             return mensaje
