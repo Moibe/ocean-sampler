@@ -1,6 +1,6 @@
 import gradio as gr
 
-version = "3.1.3"
+version = "3.1.4"
 env = "prod" #Importante porque define de donde se leerán los créditos y los datos de los usuarios!
 aplicacion = "sampler" #Se usa para que la api de sulku explore data y novelty de ese usuario.
 

@@ -1,4 +1,4 @@
-result_ok = "Result ready!" 
+result_ok = "Separación lista, espera a que carguen los dos tracks." 
 
 out_of_credits = "Out of credits..."
 
